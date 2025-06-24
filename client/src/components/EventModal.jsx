@@ -253,21 +253,22 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
         onClick={onClose}
       />
 
-      <div 
-        className="flex items-center justify-center min-h-screen px-4 py-6 relative"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex items-center justify-center min-h-screen px-4 py-6 relative">
         {/* Modal panel */}
-        <div className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-xl shadow-2xl transform transition-all relative">
-          {/* Close button - always visible */}
-          <button
-            onClick={onClose}
-            className="absolute right-4 top-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors z-10"
-            title="Close"
-          >
-            <MdClose className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-          </button>
-
+        <div className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-xl shadow-2xl transform transition-all">
+          {/* Move close button inside header */}
+          <div className="relative border-b border-gray-200 dark:border-gray-700">
+            <button
+              onClick={onClose}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+              title="Close"
+            >
+              <MdClose className="w-5 h-5 text-gray-500 dark:text-gray-400" style={{    position: "absolute",
+    left: "20px",
+    top: "-5px"}} />
+            </button>
+            {/* Rest of your header content */}
+          </div>
           {isCreating ? (
             // Event Form View
             <div className="divide-y divide-gray-200 dark:divide-gray-700">

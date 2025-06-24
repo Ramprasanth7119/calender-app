@@ -1,12 +1,12 @@
-// src/App.jsx
-import React from 'react';
+
+import { ThemeProvider } from './contexts/ThemeContext';
 import Calendar from './components/Calender';
 
 function App() {
   return (
-    <div>
+    <ThemeProvider>
       <Calendar />
-    </div>
+    </ThemeProvider>
   );
 }
 

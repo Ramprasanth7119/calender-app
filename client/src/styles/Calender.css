@@ -1,4 +1,4 @@
-/* src/styles/calendar.css */
+src/styles/calendar.css
 
 .app-layout {
   display: grid;
@@ -746,4 +746,5 @@
     justify-content: center;
   }
 }
+
 
