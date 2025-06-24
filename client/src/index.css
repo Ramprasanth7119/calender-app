@@ -1,0 +1,104 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 dark:bg-gray-900;
+  }
+}
+
+@layer components {
+  .calendar-container {
+    @apply h-full flex flex-col bg-white dark:bg-gray-800;
+  }
+
+  .event-card {
+    @apply flex items-center p-2 rounded-lg text-sm mb-1 cursor-pointer hover:shadow-md transition-all;
+  }
+
+  .event-indicator {
+    @apply flex items-center p-2 rounded-lg text-sm;
+  }
+
+  .upcoming-event-card {
+    @apply flex items-center p-3 bg-white dark:bg-gray-700 rounded-lg cursor-pointer 
+    hover:shadow-md transition-all duration-200 ease-in-out mb-2;
+  }
+}
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+} */
+
+.upcoming-events {
+  @apply mt-6 space-y-4;
+}
+
+.upcoming-events h3 {
+  @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4;
+}
+
+.upcoming-events-list {
+  @apply space-y-3;
+}
+
+.event-date {
+  @apply text-sm font-medium text-gray-600 dark:text-gray-300;
+}
+
+.event-info {
+  @apply flex-1 min-w-0;
+}
+
+.event-info .event-title {
+  @apply font-medium text-gray-900 dark:text-gray-100 truncate;
+}
+
+.event-info .event-time {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .calendar-container {
+    @apply flex-col;
+  }
+  
+  .sidebar {
+    @apply w-full border-b border-r-0;
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-header {
+    @apply flex-col items-start gap-4;
+  }
+  
+  .view-controls {
+    @apply w-full justify-center;
+  }
+  
+  .event-card {
+    @apply flex-col;
+  }
+  
+  .calendar-day {
+    @apply min-h-[100px];
+  }
+}

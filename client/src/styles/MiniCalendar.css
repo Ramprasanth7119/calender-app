@@ -1,0 +1,127 @@
+.mini-calendar {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.mini-calendar-header {
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.mini-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.mini-calendar-day-name {
+  text-align: center;
+  font-size: 12px;
+  color: #70757a;
+  padding: 4px;
+}
+
+.mini-calendar-day {
+  position: relative;
+  text-align: center;
+  padding: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px auto;
+  transition: transform 0.2s ease;
+}
+
+.mini-calendar-day:hover {
+  background-color: #f1f3f4;
+  transform: scale(1.1);
+}
+
+.mini-calendar-day.has-event {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.mini-calendar-day.has-event:hover {
+  background-color: #f0f7ff;
+  transform: scale(1.1);
+}
+
+.calendar-container.dark .mini-calendar-day.has-event:hover {
+  background-color: #1a73e8;
+  color: white;
+}
+
+.mini-calendar-empty {
+  padding: 4px;
+}
+
+.mini-calendar-day.today {
+  background-color: #1a73e8;
+  color: white;
+  animation: highlight 1s ease-out;
+}
+
+.mini-calendar-day.selected {
+  background-color: #d2e3fc;
+  color: #1a73e8;
+}
+
+.mini-calendar-event-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #dc3545;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes highlight {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Dark mode support */
+.calendar-container.dark .mini-calendar-event-dot {
+  background-color: #ff4444;
+}
+
+/* Add smooth transition for modal */
+.modal-overlay {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
