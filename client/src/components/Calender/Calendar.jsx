@@ -157,7 +157,7 @@ const Calendar = () => {
             </div>
           </div>,
           {
-            autoClose: 7000,
+            autoClose: 2000,
             className: "!bg-amber-100 dark:!bg-amber-900 !text-amber-800 dark:!text-amber-200",
             progressClassName: "!bg-amber-500"
           }
