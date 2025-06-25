@@ -88,6 +88,66 @@ const Calendar = () => {
     time: `${String(i).padStart(2, '0')}:00`
   }));
 
+  // Add this useEffect after your other useEffects
+useEffect(() => {
+  // Check for conflicts on page load
+  const checkInitialConflicts = () => {
+    const conflicts = checkEventConflicts();
+    
+    if (conflicts.length > 0) {
+      // Group conflicts by date for better presentation
+      const conflictsByDate = conflicts.reduce((acc, conflict) => {
+        const date = conflict.date;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(conflict);
+        return acc;
+      }, {});
+
+      // Show a mobile-friendly toast for each date with conflicts
+      Object.entries(conflictsByDate).forEach(([date, dateConflicts]) => {
+        toast.error(
+          <div className="text-sm">
+            <p className="font-semibold mb-1">
+              Event Conflicts on {new Date(date).toLocaleDateString()}
+            </p>
+            <div className="max-h-[150px] overflow-y-auto">
+              {dateConflicts.map((conflict, index) => (
+                <div key={index} className="mt-2 border-t border-red-200 dark:border-red-800 pt-2">
+                  <p className="text-xs opacity-75">Conflicting Events:</p>
+                  <ul className="list-disc pl-4 text-xs">
+                    <li>{conflict.events[0].title} ({conflict.events[0].startTime})</li>
+                    <li>{conflict.events[1].title} ({conflict.events[1].startTime})</li>
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>,
+          {
+            autoClose: 7000,
+            position: window.innerWidth < 768 ? "top-center" : "bottom-right",
+            className: "max-w-[90vw] md:max-w-md",
+            style: {
+              background: 'var(--toastify-color-error)',
+              maxHeight: '80vh',
+            },
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          }
+        );
+      });
+    }
+  };
+
+  // Small delay to ensure toast appears after page load
+  const timer = setTimeout(checkInitialConflicts, 1000);
+  return () => clearTimeout(timer);
+}, []); // Empty dependency array means this runs once on mount
+
+
   // Update the existing useEffect for filtered events
   useEffect(() => {
     let filtered = [...events];
@@ -375,6 +435,24 @@ const Calendar = () => {
           </h2>
         </div>
 
+            <ToastContainer
+              position={window.innerWidth < 768 ? "top-center" : "bottom-right"}
+              autoClose={7000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme={theme === 'dark' ? 'dark' : 'light'}
+              limit={3}
+              style={{
+                '--toastify-toast-width': window.innerWidth < 768 ? '90vw' : '380px',
+                '--toastify-toast-max-height': '80vh',
+              }}
+            />
+
         {/* Time slots */}
         <div className="flex-1 overflow-y-auto calendar-body">
           <div className="relative min-h-full">
@@ -658,13 +736,46 @@ const Calendar = () => {
     return filteredEvents.filter(event => event.date === targetDateString);
   };
 
-  // Add this helper function to check for event conflicts
+  // Add this helper function to check for conflicts on a specific date
+  const getConflictsForDate = (date) => {
+    const dateString = date.toISOString().split('T')[0];
+    const dayEvents = events.filter(event => event.date === dateString);
+    
+    const conflicts = [];
+    dayEvents.forEach((event1, index) => {
+      dayEvents.slice(index + 1).forEach(event2 => {
+        const time1 = new Date(`2000-01-01T${event1.startTime}`);
+        const time2 = new Date(`2000-01-01T${event2.startTime}`);
+        const endTime1 = new Date(`2000-01-01T${event1.endTime}`);
+        const endTime2 = new Date(`2000-01-01T${event2.endTime}`);
+
+        if ((time1 <= time2 && endTime1 > time2) || 
+            (time2 <= time1 && endTime2 > time1)) {
+          conflicts.push(event1, event2);
+        }
+      });
+    });
+    
+    return conflicts;
+  };
+
+  // Add this function before the conflict checking useEffect
   const checkEventConflicts = () => {
     const conflicts = [];
-    
-    events.forEach((event1, index) => {
-      events.slice(index + 1).forEach(event2 => {
-        if (event1.date === event2.date) {
+    const eventsByDate = {};
+
+    // Group events by date
+    events.forEach(event => {
+      if (!eventsByDate[event.date]) {
+        eventsByDate[event.date] = [];
+      }
+      eventsByDate[event.date].push(event);
+    });
+
+    // Check conflicts for each date
+    Object.entries(eventsByDate).forEach(([date, dayEvents]) => {
+      dayEvents.forEach((event1, index) => {
+        dayEvents.slice(index + 1).forEach(event2 => {
           const time1 = new Date(`2000-01-01T${event1.startTime}`);
           const time2 = new Date(`2000-01-01T${event2.startTime}`);
           const endTime1 = new Date(`2000-01-01T${event1.endTime}`);
@@ -673,14 +784,14 @@ const Calendar = () => {
           if ((time1 <= time2 && endTime1 > time2) || 
               (time2 <= time1 && endTime2 > time1)) {
             conflicts.push({
-              date: event1.date,
+              date,
               events: [event1, event2]
             });
           }
-        }
+        });
       });
     });
-    
+
     return conflicts;
   };
 
@@ -688,35 +799,50 @@ const Calendar = () => {
   useEffect(() => {
     const conflicts = checkEventConflicts();
     
-    // Save conflicts to localStorage
-    localStorage.setItem('calendarConflicts', JSON.stringify(conflicts));
-    
     if (conflicts.length > 0) {
       conflicts.forEach(conflict => {
         const conflictKey = `${conflict.date}-${conflict.events[0].id}-${conflict.events[1].id}`;
-        
-        // Check if we've already shown this conflict notification
         const shownConflicts = JSON.parse(localStorage.getItem('shownConflicts') || '[]');
         
         if (!shownConflicts.includes(conflictKey)) {
-          toast.error(
-            <div>
-              <p className="font-semibold">Event Conflict Detected!</p>
-              <p className="text-sm">Date: {new Date(conflict.date).toLocaleDateString()}</p>
-              <p className="text-sm">Events:</p>
-              <ul className="text-sm list-disc pl-4">
-                <li>{conflict.events[0].title} ({conflict.events[0].startTime} - {conflict.events[0].endTime})</li>
-                <li>{conflict.events[1].title} ({conflict.events[1].startTime} - {conflict.events[1].endTime})</li>
-              </ul>
+          toast.warn(
+            <div className="conflict-notification">
+              <p className="font-semibold text-amber-800 dark:text-amber-200">
+                Schedule Overlap Detected
+              </p>
+              <p className="text-sm text-amber-700 dark:text-amber-300">
+                {new Date(conflict.date).toLocaleDateString()}
+              </p>
+              <div className="mt-2 bg-amber-50 dark:bg-amber-900/30 p-2 rounded-lg">
+                {conflict.events.map((event, idx) => (
+                  <div 
+                    key={event.id} 
+                    className={`flex items-center ${idx === 0 ? 'mb-2' : ''}`}
+                  >
+                    <div 
+                      className="w-2 h-2 rounded-full mr-2"
+                      style={{ backgroundColor: event.color }}
+                    />
+                    <span className="text-sm text-amber-700 dark:text-amber-300">
+                      {event.title} ({event.startTime} - {event.endTime})
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>,
             {
-              autoClose: false,
-              closeOnClick: true,
-              onClose: () => {
-                // Add this conflict to shown conflicts
-                const updatedShownConflicts = [...shownConflicts, conflictKey];
-                localStorage.setItem('shownConflicts', JSON.stringify(updatedShownConflicts));
-              }
+              autoClose: 7000,
+              className: "!bg-amber-100 dark:!bg-amber-900 !text-amber-800 dark:!text-amber-200",
+              progressClassName: "!bg-amber-500",
+              closeButton: ({ closeToast }) => (
+                <button
+                  onClick={closeToast}
+                  className="p-1 rounded-full hover:bg-amber-200 dark:hover:bg-amber-800 
+                           text-amber-700 dark:text-amber-300 transition-colors"
+                >
+                  ×
+                </button>
+              )
             }
           );
         }
@@ -741,6 +867,8 @@ const Calendar = () => {
           const date = new Date(currentYear, currentMonth, day);
           const dateString = date.toISOString().split('T')[0];
           const dayEvents = events.filter(event => event.date === dateString);
+          const conflicts = getConflictsForDate(date);
+          const hasConflicts = conflicts.length > 0;
           const hasMoreEvents = dayEvents.length > MAX_VISIBLE_EVENTS;
 
           return (
@@ -750,10 +878,16 @@ const Calendar = () => {
                 setSelectedDate(date);
                 setShowModal(true);
               }}
-              className="min-h-[120px] p-2 bg-white dark:bg-gray-800 relative 
-                       cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 
-                       transition-colors"
+              className={`min-h-[120px] p-2 relative cursor-pointer transition-colors
+                ${hasConflicts 
+                  ? 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 ' +
+                    'hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/30 dark:hover:to-orange-900/30' 
+                  : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
             >
+              {hasConflicts && (
+                <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 
+                              animate-pulse shadow-lg shadow-amber-200 dark:shadow-amber-900/30" />
+              )}
               <span className={`text-sm font-medium ${
                 isToday(day) ? 'text-blue-600 dark:text-blue-400' : 
                              'text-gray-900 dark:text-gray-100'
@@ -1036,12 +1170,25 @@ const Calendar = () => {
   // Add renderUpcomingEvents function
   const renderUpcomingEvents = () => {
     const now = new Date();
+    now.setHours(0, 0, 0, 0); // Reset time part for accurate date comparison
+    
     const upcomingEvents = events
       .filter(event => {
         const eventDate = new Date(event.date);
+        // Include events from today onwards
         return eventDate >= now && !event.completed;
       })
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .sort((a, b) => {
+        // First sort by date
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        if (dateA - dateB !== 0) return dateA - dateB;
+        
+        // If same date, sort by start time
+        const timeA = new Date(`2000-01-01T${a.startTime}`);
+        const timeB = new Date(`2000-01-01T${b.startTime}`);
+        return timeA - timeB;
+      })
       .slice(0, 5); // Show only next 5 upcoming events
 
     return (
@@ -1093,18 +1240,10 @@ const Calendar = () => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Mobile view */}
-      <div className="lg:hidden">
-        {renderHeader()}
-        {renderMobileView()}
-      </div>
-
-      {/* Desktop view - hide on mobile */}
-      <div className="hidden lg:flex flex-col lg:flex-row h-full relative">
-        {/* Existing sidebar code */}
-        <aside className="lg:w-80 flex-shrink-0 bg-white dark:bg-gray-800 border-b lg:border-r 
-                         border-gray-200 dark:border-gray-700 overflow-y-auto sticky top-0
-                         h-auto max-h-[250px] lg:max-h-screen lg:h-screen">
+      <div className="flex h-full">
+        {/* Sidebar for larger screens */}
+        <aside className="hidden lg:block w-80 flex-shrink-0 bg-white dark:bg-gray-800 border-r 
+                         border-gray-200 dark:border-gray-700 overflow-y-auto">
           <div className="p-4">
             <MiniCalendar 
               currentMonth={currentMonth}
@@ -1112,16 +1251,20 @@ const Calendar = () => {
               onDateSelect={handleDateClick}
               events={events}
             />
+            {/* Upcoming events section */}
             {renderUpcomingEvents()}
           </div>
         </aside>
 
-        {/* Existing main calendar area */}
+        {/* Main calendar area */}
         <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {/* Header */}
           <div className="flex-shrink-0 sticky top-0 z-10 bg-gray-50 dark:bg-gray-900">
             {renderHeader()}
           </div>
-          <div className="flex-1 overflow-auto p-4 h-full">
+          
+          {/* Calendar content */}
+          <div className="flex-1 overflow-auto p-4">
             <div className="min-h-full">
               {renderView()}
             </div>
@@ -1129,7 +1272,7 @@ const Calendar = () => {
         </main>
       </div>
 
-      {/* Modal and Toast container */}
+      {/* Modal */}
       {showModal && (
         <EventModal
           date={selectedDate || new Date()}
@@ -1141,7 +1284,25 @@ const Calendar = () => {
           theme={theme}
         />
       )}
-      <ToastContainer position="bottom-right" theme={theme} />
+
+      {/* Toast container */}
+      <ToastContainer
+        position={window.innerWidth < 768 ? "top-center" : "bottom-right"}
+        autoClose={7000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : 'light'}
+        limit={3}
+        style={{
+          '--toastify-toast-width': window.innerWidth < 768 ? '90vw' : '380px',
+          '--toastify-toast-max-height': '80vh',
+        }}
+      />
     </div>
   );
 };

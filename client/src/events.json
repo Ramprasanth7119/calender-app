@@ -2,73 +2,19 @@
   {
     "id": 1,
     "title": "Team Meeting",
-    "date": "2025-06-24",
-    "startTime": "11:00",
-    "endTime": "12:00",
-    "color": "#2196F3",
-    "completed": false
-  },
-  {
-    "id": 2,
-    "title": "Frontend Demo",
     "date": "2025-06-25",
-    "startTime": "09:00",
-    "endTime": "10:00",
+    "startTime": "10:00",
+    "endTime": "11:00",
     "color": "#4CAF50",
     "completed": false
   },
   {
-    "id": 3,
+    "id": 2,
     "title": "Project Deadline",
-    "date": "2025-06-26",
-    "startTime": "09:00",
-    "endTime": "10:00",
+    "date": "2025-06-25",
+    "startTime": "14:00",
+    "endTime": "15:00",
     "color": "#F44336",
-    "completed": false
-  },
-  {
-    "id": 4,
-    "title": "Client Meeting",
-    "date": "2025-06-27",
-    "startTime": "14:00",
-    "endTime": "15:00",
-    "color": "#FF9800",
-    "completed": false
-  },
-  {
-    "id": 5,
-    "title": "Project Demo",
-    "date": "2025-06-23",
-    "startTime": "14:00",
-    "endTime": "15:00",
-    "color": "#FF9800",
-    "completed": false
-  },
-  {
-    "id": 6,
-    "title": "Project Demo-II",
-    "date": "2025-06-23",
-    "startTime": "14:00",
-    "endTime": "15:00",
-    "color": "#FF9800",
-    "completed": false
-  },
-  {
-    "id": 7,
-    "title": "Multiple events",
-    "date": "2025-06-23",
-    "startTime": "09:00",
-    "endTime": "10:00",
-    "color": "#FF9800",
-    "completed": false
-  },
-  {
-    "id": 8,
-    "title": "Multiple events",
-    "date": "2025-06-23",
-    "startTime": "11:00",
-    "endTime": "12:00",
-    "color": "#FF9800",
     "completed": false
   }
 ]

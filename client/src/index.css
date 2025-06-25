@@ -3,72 +3,83 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add base styles */
 @layer base {
   body {
-    @apply bg-gray-50 dark:bg-gray-900;
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
   }
 }
 
+/* Add custom styles that work with Tailwind */
 @layer components {
-  /* Calendar Container */
   .calendar-container {
-    @apply h-screen max-h-screen flex flex-col bg-white dark:bg-gray-800 
-           relative overflow-hidden lg:overflow-visible;
+    @apply bg-white dark:bg-gray-800 transition-colors duration-200;
   }
+  
+  .calendar-day {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 
+           dark:border-gray-700 transition-colors duration-200;
+  }
+}
 
-  /* Calendar Header */
-  .calendar-header {
-    @apply relative z-20 bg-white dark:bg-gray-800 border-b dark:border-gray-700;
-  }
+/* Calendar Container */
+.calendar-container {
+  @apply h-screen max-h-screen flex flex-col bg-white dark:bg-gray-800 
+         relative overflow-hidden lg:overflow-visible;
+}
 
-  /* Calendar Body */
-  .calendar-body {
-    @apply flex-1 overflow-y-auto relative z-10;
-  }
+/* Calendar Header */
+.calendar-header {
+  @apply relative z-20 bg-white dark:bg-gray-800 border-b dark:border-gray-700;
+}
 
-  /* Calendar Grid */
-  .calendar-grid {
-    @apply relative z-0 min-h-min transition-transform duration-300 ease-in-out;
-  }
+/* Calendar Body */
+.calendar-body {
+  @apply flex-1 overflow-y-auto relative z-10;
+}
 
-  /* Calendar Days */
-  .calendar-days {
-    @apply relative z-0;
-  }
+/* Calendar Grid */
+.calendar-grid {
+  @apply relative z-0 min-h-min transition-transform duration-300 ease-in-out;
+}
 
-  /* Filter Dropdown */
-  .filter-dropdown-container {
-    @apply relative z-[100];
-  }
+/* Calendar Days */
+.calendar-days {
+  @apply relative z-0;
+}
 
-  .filter-dropdown {
-    @apply absolute right-0 top-full mt-1
-           w-56 p-1
-           bg-white dark:bg-gray-800 
-           rounded-lg shadow-lg 
-           border border-gray-200 dark:border-gray-700 
-           z-[100];
-  }
+/* Filter Dropdown */
+.filter-dropdown-container {
+  @apply relative z-[100];
+}
 
-  .filter-dropdown-overlay {
-    @apply fixed inset-0 z-[90];
-  }
+.filter-dropdown {
+  @apply absolute right-0 top-full mt-1
+         w-56 p-1
+         bg-white dark:bg-gray-800 
+         rounded-lg shadow-lg 
+         border border-gray-200 dark:border-gray-700 
+         z-[100];
+}
 
-  /* Event Cards */
-  .event-card {
-    @apply flex items-center p-2 rounded-lg text-sm mb-1 
-           cursor-pointer hover:shadow-md transition-all;
-  }
+.filter-dropdown-overlay {
+  @apply fixed inset-0 z-[90];
+}
 
-  .event-indicator {
-    @apply flex items-center p-2 rounded-lg text-sm;
-  }
+/* Event Cards */
+.event-card {
+  @apply flex items-center p-2 rounded-lg text-sm mb-1 
+         cursor-pointer hover:shadow-md transition-all;
+}
 
-  .upcoming-event-card {
-    @apply flex items-center p-3 bg-white dark:bg-gray-700 rounded-lg 
-           cursor-pointer hover:shadow-md transition-all duration-200 
-           ease-in-out mb-2;
-  }
+.event-indicator {
+  @apply flex items-center p-2 rounded-lg text-sm;
+}
+
+.upcoming-event-card {
+  @apply flex items-center p-3 bg-white dark:bg-gray-700 rounded-lg 
+         cursor-pointer hover:shadow-md transition-all duration-200 
+         ease-in-out mb-2;
 }
 
 /* Custom Scrollbar Styling */

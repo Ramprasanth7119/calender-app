@@ -1,5 +1,16 @@
 src/styles/calendar.css
 
+/* Remove these root variables as they conflict with Tailwind */
+:root {
+  /* Remove all CSS variables */
+}
+
+[data-theme='dark'] {
+  /* Remove all CSS variables */
+}
+
+/* Keep only custom styles that don't override Tailwind classes */
+
 .app-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -9,7 +20,8 @@ src/styles/calendar.css
 
 /* Modern Calendar Layout */
 .calendar-container {
-  background: #ffffff;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
   padding: 24px;
@@ -20,6 +32,8 @@ src/styles/calendar.css
 }
 
 .calendar-header {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -109,26 +123,24 @@ src/styles/calendar.css
 
 .calendar-day {
   aspect-ratio: 1;
-  background: #f8f9fa;
+  background: var(--calendar-day-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px;
   min-height: 120px;
   transition: all 0.2s ease;
   cursor: pointer;
-  border: 2px solid transparent;
   overflow-y: auto;
   scrollbar-width: thin;
 }
 
 .calendar-day:hover {
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px);
+  background: var(--hover-bg);
 }
 
 .calendar-day.today {
-  background: #e8f0fe;
-  border-color: #1a73e8;
+  background: var(--today-bg);
+  border-color: var(--today-border);
 }
 
 .day-number {
@@ -146,8 +158,9 @@ src/styles/calendar.css
   padding: 8px;
   margin-bottom: 6px;
   border-radius: 8px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   transition: all 0.2s ease;
 }
 
@@ -166,7 +179,7 @@ src/styles/calendar.css
 .event-title {
   font-size: 12px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -175,7 +188,7 @@ src/styles/calendar.css
 
 .event-time {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .event-avatar {
@@ -595,9 +608,9 @@ src/styles/calendar.css
 
 /* Add sidebar styles */
 .sidebar {
-  background: #f8f9fa;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
   padding: 20px;
-  border-right: 1px solid #e0e0e0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
