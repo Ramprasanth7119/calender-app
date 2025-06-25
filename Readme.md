@@ -117,8 +117,5 @@ Feel free to open an issue or submit a Pull Request.
 
 ## 📸 Screenshots
 
-<!--
-Add screenshots here, e.g.:
-![Month View](docs/screenshot-month.png)
-![Week View](docs/screenshot-week.png)
--->
+![image](https://github.com/user-attachments/assets/be167973-1d93-4992-b95d-1db215830e3c)
+
