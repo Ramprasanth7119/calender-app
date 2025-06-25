@@ -1,12 +1,9 @@
-
-import { ThemeProvider } from './contexts/ThemeContext';
-import Calendar from './components/Calender';
+import React from 'react';
+import Calender from './components/Calender/Calendar';
 
 function App() {
   return (
-    <ThemeProvider>
-      <Calendar />
-    </ThemeProvider>
+    <Calender />
   );
 }
 

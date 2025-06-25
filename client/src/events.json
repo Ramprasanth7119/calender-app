@@ -16,5 +16,113 @@
     "endTime": "15:00",
     "color": "#F44336",
     "completed": false
+  },
+  {
+    "id": 3,
+    "title": "Doctor Appointment",
+    "date": "2025-06-26",
+    "startTime": "09:30",
+    "endTime": "10:00",
+    "color": "#2196F3",
+    "completed": false
+  },
+  {
+    "id": 4,
+    "title": "Lunch with Sarah",
+    "date": "2025-06-26",
+    "startTime": "12:30",
+    "endTime": "13:30",
+    "color": "#FF9800",
+    "completed": false
+  },
+  {
+    "id": 5,
+    "title": "Yoga Class",
+    "date": "2025-06-27",
+    "startTime": "18:00",
+    "endTime": "19:00",
+    "color": "#9C27B0",
+    "completed": false
+  },
+  {
+    "id": 6,
+    "title": "Grocery Shopping",
+    "date": "2025-06-27",
+    "startTime": "16:00",
+    "endTime": "17:00",
+    "color": "#795548",
+    "completed": true
+  },
+  {
+    "id": 7,
+    "title": "Dentist Checkup",
+    "date": "2025-06-28",
+    "startTime": "11:00",
+    "endTime": "11:30",
+    "color": "#E91E63",
+    "completed": false
+  },
+  {
+    "id": 8,
+    "title": "Weekend Hike",
+    "date": "2025-06-29",
+    "startTime": "07:00",
+    "endTime": "12:00",
+    "color": "#4CAF50",
+    "completed": false
+  },
+  {
+    "id": 9,
+    "title": "Final Year Project Submission",
+    "date": "2025-07-05",
+    "startTime": "15:00",
+    "endTime": "16:00",
+    "color": "#3F51B5",
+    "completed": false
+  },
+  {
+    "id": 10,
+    "title": "Campus Placement Interview - Infosys",
+    "date": "2025-07-10",
+    "startTime": "10:00",
+    "endTime": "11:30",
+    "color": "#009688",
+    "completed": false
+  },
+  {
+    "id": 11,
+    "title": "Farewell Party",
+    "date": "2025-07-15",
+    "startTime": "17:00",
+    "endTime": "20:00",
+    "color": "#FFC107",
+    "completed": false
+  },
+  {
+    "id": 12,
+    "title": "Final Semester Exam - Software Engineering",
+    "date": "2025-07-18",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "color": "#673AB7",
+    "completed": false
+  },
+  {
+    "id": 13,
+    "title": "Resume Workshop (Career Guidance Cell)",
+    "date": "2025-07-02",
+    "startTime": "13:00",
+    "endTime": "15:00",
+    "color": "#00BCD4",
+    "completed": false
+  },
+  {
+    "id": 14,
+    "title": "Internship Joining (TCS)",
+    "date": "2025-08-01",
+    "startTime": "09:00",
+    "endTime": "09:30",
+    "color": "#607D8B",
+    "completed": false
   }
 ]

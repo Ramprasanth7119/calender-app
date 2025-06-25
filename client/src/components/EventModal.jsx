@@ -263,9 +263,10 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
               className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
               title="Close"
             >
-              <MdClose className="w-5 h-5 text-gray-500 dark:text-gray-400" style={{    position: "absolute",
+              <MdClose className="w-10 h-9 text-gray-500 dark:text-gray-400" style={{    position: "absolute",
     left: "20px",
-    top: "-5px"}} />
+    top: "-5px",
+    }} />
             </button>
             {/* Rest of your header content */}
           </div>
@@ -284,7 +285,7 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
                   onClick={onClose}
                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                 >
-                  <MdClose className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <MdClose className="w-5 h-5 text-gray-500 dark:text-gray-800" />
                 </button>
               </div>
 
@@ -460,7 +461,6 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
         </div>
       </div>
 
-      {/* Toast Container */}
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
