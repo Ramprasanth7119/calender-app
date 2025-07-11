@@ -61,14 +61,15 @@ const Calendar = () => {
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
   const [isSwiping, setIsSwiping] = useState(false);
+  // Add this state to track shown conflicts
+  const [shownConflicts, setShownConflicts] = useState(new Set());
 
-  const filterOptions = [
-    { label: "All Events", value: "all", icon: <MdEvent className="w-4 h-4 mr-2" /> },
-    { label: "This Month", value: "thisMonth", icon: <MdEvent className="w-4 h-4 mr-2" /> },
-    { label: `Previous Month (${monthNames[currentMonth === 0 ? 11 : currentMonth - 1]})`, value: "previousMonth", icon: <MdChevronLeft className="w-4 h-4 mr-2" /> },
-    { label: "Upcoming", value: "upcoming", icon: <MdChevronRight className="w-4 h-4 mr-2" /> },
-    { label: "Completed", value: "completed", icon: <MdDone className="w-4 h-4 mr-2" /> }
-  ];
+const filterOptions = [
+  { label: "All Events", value: "all", icon: <MdEvent className="w-4 h-4 mr-2" /> },
+  { label: "This Month", value: "thisMonth", icon: <MdEvent className="w-4 h-4 mr-2" /> },
+  { label: "Upcoming", value: "upcoming", icon: <MdChevronRight className="w-4 h-4 mr-2" /> },
+  { label: "Completed", value: "completed", icon: <MdDone className="w-4 h-4 mr-2" /> }
+];
 
   const TIME_SLOTS = Array.from({ length: 24 }, (_, i) => ({
     hour: i,
@@ -130,40 +131,52 @@ const Calendar = () => {
     setFilteredEvents(filtered);
   }, [events, activeFilter, searchText, currentMonth, currentYear]);
 
+  // Update the conflict checking useEffect
   useEffect(() => {
-    const conflicts = checkEventConflicts(events);
-    if (conflicts.length > 0) {
-      conflicts.forEach(conflict => {
-        toast.warn(
-          <div className="conflict-notification">
-            <p className="font-semibold text-amber-800 dark:text-amber-200">
-              Schedule Overlap Detected
-            </p>
-            <p className="text-sm text-amber-700 dark:text-amber-300">
-              {new Date(conflict.date).toLocaleDateString()}
-            </p>
-            <div className="mt-2 bg-amber-50 dark:bg-amber-900/30 p-2 rounded-lg">
-              {conflict.events.map((event, idx) => (
-                <div
-                  key={event.id}
-                  className={`flex items-center ${idx === 0 ? "mb-2" : ""}`}
-                >
-                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: event.color }} />
-                  <span className="text-sm text-amber-700 dark:text-amber-300">
-                    {event.title} ({event.startTime} - {event.endTime})
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>,
-          {
-            autoClose: 2000,
-            className: "!bg-amber-100 dark:!bg-amber-900 !text-amber-800 dark:!text-amber-200",
-            progressClassName: "!bg-amber-500"
-          }
-        );
-      });
-    }
+    // Debounce the conflict checking to avoid repeated calls
+    const timeoutId = setTimeout(() => {
+      const conflicts = checkEventConflicts(events);
+      
+      if (conflicts.length > 0) {
+        conflicts.forEach(conflict => {
+          // Create a unique ID for each conflict based on date and event IDs
+          const conflictId = `conflict-${conflict.date}-${conflict.events.map(e => e.id).sort().join('-')}`;
+          
+          toast.warn(
+            <div className="conflict-notification">
+              <p className="font-semibold text-amber-800 dark:text-amber-200">
+                Schedule Overlap Detected
+              </p>
+              <p className="text-sm text-amber-700 dark:text-amber-300">
+                {new Date(conflict.date).toLocaleDateString()}
+              </p>
+              <div className="mt-2 bg-amber-50 dark:bg-amber-900/30 p-2 rounded-lg">
+                {conflict.events.map((event, idx) => (
+                  <div
+                    key={event.id}
+                    className={`flex items-center ${idx === 0 ? "mb-2" : ""}`}
+                  >
+                    <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: event.color }} />
+                    <span className="text-sm text-amber-700 dark:text-amber-300">
+                      {event.title} ({event.startTime} - {event.endTime})
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>,
+            {
+              autoClose: 5000,
+              className: "!bg-amber-100 dark:!bg-amber-900 !text-amber-800 dark:!text-amber-200",
+              progressClassName: "!bg-amber-500",
+              toastId: conflictId, // This prevents duplicate toasts with the same ID
+              updateId: conflictId // This updates existing toast instead of creating new one
+            }
+          );
+        });
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
   }, [events]);
 
   useEffect(() => {
@@ -177,6 +190,7 @@ const Calendar = () => {
   const handleFilterChange = (filterValue) => {
     setActiveFilter(filterValue);
     let filtered = [...events];
+    
     if (searchText.trim()) {
       filtered = filtered.filter(event =>
         event.title.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -184,6 +198,7 @@ const Calendar = () => {
         event.date.includes(searchText)
       );
     }
+    
     switch (filterValue) {
       case "thisMonth":
         setCurrentMonth(today.getMonth());
@@ -196,26 +211,51 @@ const Calendar = () => {
         });
         toast.info(`Showing events for ${monthNames[today.getMonth()]} ${today.getFullYear()}`);
         break;
+        
       case "all":
         setCurrentMonth(today.getMonth());
         setCurrentYear(today.getFullYear());
         break;
+        
       case "previousMonth":
-        const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-        const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        // Fix: Calculate previous month from TODAY, not current displayed month
+        const todayMonth = today.getMonth();
+        const todayYear = today.getFullYear();
+        const prevMonth = todayMonth === 0 ? 11 : todayMonth - 1;
+        const prevYear = todayMonth === 0 ? todayYear - 1 : todayYear;
+        
+        // Update the display to show previous month
         setCurrentMonth(prevMonth);
         setCurrentYear(prevYear);
+        
+        // Filter events for previous month
         const prevMonthStart = new Date(prevYear, prevMonth, 1);
         const prevMonthEnd = new Date(prevYear, prevMonth + 1, 0);
+        
         filtered = filtered.filter(event => {
           const eventDate = new Date(event.date);
           return eventDate >= prevMonthStart && eventDate <= prevMonthEnd;
         });
+        
         toast.info(`Showing events for ${monthNames[prevMonth]} ${prevYear}`);
         break;
+        
+      case "upcoming":
+        const now = new Date();
+        filtered = filtered.filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate >= now && !event.completed;
+        });
+        break;
+        
+      case "completed":
+        filtered = filtered.filter(event => event.completed);
+        break;
+        
       default:
         break;
     }
+    
     setFilteredEvents(filtered);
     setFilterOpen(false);
   };
