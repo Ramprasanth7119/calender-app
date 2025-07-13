@@ -1,4 +1,3 @@
-import React from "react";
 
 const ViewSelector = ({ VIEW_OPTIONS, viewMode, handleViewChange }) => (
   <div className="hidden sm:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">

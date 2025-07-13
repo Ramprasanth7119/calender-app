@@ -1,10 +1,4 @@
-import React from "react";
 
-/**
- * CalendarGrid renders the calendar's month grid, ensuring proper alignment by always filling
- * all 6 rows (42 cells) and accounting for the first day's offset, so the grid remains consistent.
- * Now includes the weekday headers at the top.
- */
 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const CalendarGrid = ({
@@ -13,7 +7,6 @@ const CalendarGrid = ({
   currentYear,
   currentMonth,
   isToday,
-  getEventsForDate,
   events,
   getConflictsForDate,
   setSelectedDate,
@@ -22,7 +15,6 @@ const CalendarGrid = ({
   const MAX_VISIBLE_EVENTS = 2;
 
   // Calculate the total number of cells (6 rows x 7 columns = 42)
-  // This ensures consistent grid alignment for all months
   const totalCells = 42;
   const gridCells = [];
 
@@ -92,7 +84,6 @@ const CalendarGrid = ({
     );
   }
 
-  // Fill trailing empty cells (after last day of month), if needed
   while (gridCells.length < totalCells) {
     gridCells.push(
       <div key={`empty-end-${gridCells.length}`} className="bg-gray-50 dark:bg-gray-800 h-32" />

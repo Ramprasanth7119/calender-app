@@ -1,6 +1,4 @@
-import React from "react";
 import { MdAdd } from "react-icons/md";
-import { ToastContainer } from "react-toastify";
 
 const DayView = ({
   selectedDate,
@@ -10,7 +8,6 @@ const DayView = ({
   setSelectedDate,
   currentYear,
   currentMonth,
-  theme,
 }) => {
   const selectedDateEvents = selectedDate ? events.filter(event => event.date === selectedDate.toISOString().split('T')[0]) : [];
   return (
@@ -24,23 +21,6 @@ const DayView = ({
           })}
         </h2>
       </div>
-      <ToastContainer
-        position={window.innerWidth < 768 ? "top-center" : "bottom-right"}
-        autoClose={7000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme={theme === "dark" ? "dark" : "light"}
-        limit={3}
-        style={{
-          "--toastify-toast-width": window.innerWidth < 768 ? "90vw" : "380px",
-          "--toastify-toast-max-height": "80vh",
-        }}
-      />
       <div className="flex-1 overflow-y-auto calendar-body">
         <div className="relative min-h-full">
           {TIME_SLOTS.map(({ hour, time }) => (

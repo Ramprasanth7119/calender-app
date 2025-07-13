@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   MdAccessTime, 
-  MdPeople, 
   MdLocationOn, 
   MdDescription,
   MdClose,
@@ -12,7 +11,6 @@ import {
   MdDone,
   MdEvent,
   MdPalette,
-  MdVideoCall
 } from 'react-icons/md';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -57,6 +55,7 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
   const handleSave = () => {
     if (!event.title.trim()) {
       toast.error('Please add a title for the event', {
+        toastId: 'no-title',
         className: 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-100',
         progressClassName: 'bg-red-500'
       });
@@ -73,6 +72,7 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
       if (eventDate < today) {
         // Show warning toast but allow creation
         toast.warning('You are creating an event for a past date', {
+          toastId: `past-date-${event.date}`,
           position: "top-center",
           icon: '⚠️',
           className: 'bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100',
@@ -96,6 +96,7 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
 
       onSave(eventToSave, isEditing);
       toast.success(isEditing ? 'Event updated successfully!' : 'Event added successfully!', {
+        toastId: isEditing ? 'event-updated' : 'event-added',
         className: 'bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-100',
         progressClassName: 'bg-green-500'
       });
@@ -103,6 +104,7 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
     } catch (error) {
       console.error('Error saving event:', error);
       toast.error('Failed to save event. Please try again.', {
+        toastId: 'no-title',
         className: 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-100',
         progressClassName: 'bg-red-500'
       });
@@ -122,112 +124,31 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
   const handleDelete = (eventId) => {
     try {
       onDelete(eventId);
-      toast.success('Event deleted successfully!');
+      toast.success('Event deleted successfully!', {
+        toastId: "event-deleted",
+      });
       onClose();
     } catch (error) {
       console.error('Error deleting event:', error);
-      toast.error('Failed to delete event. Please try again.');
+      toast.error('Failed to delete event. Please try again.', {
+        toastId: "event-delete-fail",
+      });
     }
   };
 
   const handleComplete = (eventId) => {
     try {
       onComplete(eventId);
-      toast.success('Event marked as completed!');
+      toast.success('Event marked as completed!',{
+        toastId: `event-completed-${eventId}`,
+      });
     } catch (error) {
       console.error('Error completing event:', error);
-      toast.error('Failed to complete event. Please try again.');
+      toast.error('Failed to complete event. Please try again.', {
+        toastId: "event-complete-fail",
+      });
     }
   };
-
-  const resetForm = () => {
-    setEvent({
-      title: '',
-      startTime: '09:00',
-      endTime: '10:00',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      repeat: 'none',
-      guests: [],
-      location: '',
-      description: '',
-      videoConference: false,
-      notification: '30',
-      visibility: 'default',
-      date: date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      color: '#1a73e8',
-      completed: false
-    });
-    setIsCreating(false);
-    setIsEditing(false);
-    setEditingEvent(null);
-  };
-
-  const renderEventsList = () => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Events for {date.toLocaleDateString()}
-        </h3>
-        <button
-          onClick={() => setIsCreating(true)}
-          className="flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
-        >
-          <MdAdd className="mr-1" /> Add Event
-        </button>
-      </div>
-      
-      {events.length > 0 ? (
-        <div className="space-y-3">
-          {events.map(evt => (
-            <div
-              key={evt.id}
-              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:shadow-md transition-all"
-              style={{ borderLeft: `4px solid ${evt.color}` }}
-            >
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">{evt.title}</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                  <MdAccessTime className="w-4 h-4 mr-1" />
-                  {evt.startTime} - {evt.endTime}
-                </p>
-                {evt.location && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                    <MdLocationOn className="w-4 h-4 mr-1" />
-                    {evt.location}
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => handleEdit(evt)}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
-                  title="Edit"
-                >
-                  <MdEdit className="w-5 h-5 text-blue-500" />
-                </button>
-                <button
-                  onClick={() => handleDelete(evt.id)}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
-                  title="Delete"
-                >
-                  <MdDelete className="w-5 h-5 text-red-500" />
-                </button>
-                {!evt.completed && (
-                  <button
-                    onClick={() => handleComplete(evt.id)}
-                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
-                    title="Mark as completed"
-                  >
-                    <MdDone className="w-5 h-5 text-green-500" />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : renderEmptyState()}
-    </div>
-  );
 
   const renderEmptyState = () => (
     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -247,7 +168,6 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
   // Update the modal container structure
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop with blur effect and click handler */}
       <div 
         className="fixed inset-0 backdrop-blur-sm bg-black/30 transition-opacity" 
         onClick={onClose}
@@ -256,7 +176,7 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
       <div className="flex items-center justify-center min-h-screen px-4 py-6 relative">
         {/* Modal panel */}
         <div className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-xl shadow-2xl transform transition-all">
-          {/* Move close button inside header */}
+
           <div className="relative border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={onClose}
@@ -268,7 +188,6 @@ const EventModal = ({ date, events = [], onClose, onSave, onDelete, onComplete, 
     top: "-5px",
     }} />
             </button>
-            {/* Rest of your header content */}
           </div>
           {isCreating ? (
             // Event Form View

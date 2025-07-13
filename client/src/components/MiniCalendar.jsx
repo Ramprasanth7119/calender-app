@@ -1,4 +1,4 @@
-import React from 'react';
+
 import '../styles/MiniCalendar.css';
 
 const MiniCalendar = ({ currentMonth, currentYear, onDateSelect, events }) => {
@@ -34,7 +34,6 @@ const MiniCalendar = ({ currentMonth, currentYear, onDateSelect, events }) => {
   const handleDateClick = (day, hasEvent) => {
     const selectedDate = new Date(currentYear, currentMonth, day);
     onDateSelect(selectedDate);
-    // Remove the onEventClick call since it's not needed
   };
 
   return (

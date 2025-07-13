@@ -198,15 +198,6 @@
     "completed": false
   },
   {
-    "id": 16,
-    "title": "Conflict events",
-    "date": "2025-06-30",
-    "startTime": "16:00",
-    "endTime": "17:00",
-    "color": "#F06292",
-    "completed": false
-  },
-  {
     "id": 17,
     "title": "Project Review",
     "date": "2025-06-10",

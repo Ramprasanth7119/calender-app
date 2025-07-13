@@ -1,4 +1,4 @@
-import React from "react";
+
 import { MdAdd } from "react-icons/md";
 
 const WeekView = ({
@@ -8,8 +8,6 @@ const WeekView = ({
   TIME_SLOTS,
   setSelectedDate,
   setShowModal,
-  currentYear,
-  currentMonth,
 }) => (
   <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-sm">
     <div className="grid grid-cols-8 border-b dark:border-gray-700">

@@ -20,9 +20,7 @@ import {
 } from "./helpers";
 import { ToastContainer, toast } from "react-toastify";
 import {
-  MdAdd,
   MdEvent,
-  MdChevronLeft,
   MdChevronRight,
   MdDone,
   MdCalendarToday,
@@ -60,9 +58,6 @@ const Calendar = () => {
   const [searchText, setSearchText] = useState("");
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
-  const [isSwiping, setIsSwiping] = useState(false);
-  // Add this state to track shown conflicts
-  const [shownConflicts, setShownConflicts] = useState(new Set());
 
 const filterOptions = [
   { label: "All Events", value: "all", icon: <MdEvent className="w-4 h-4 mr-2" /> },
@@ -104,14 +99,6 @@ const filterOptions = [
         filtered = filtered.filter(event => {
           const eventDate = new Date(event.date);
           return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
-        });
-        break;
-      case "previousMonth":
-        const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-        const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-        filtered = filtered.filter(event => {
-          const eventDate = new Date(event.date);
-          return eventDate.getMonth() === prevMonth && eventDate.getFullYear() === prevYear;
         });
         break;
       case "upcoming":
@@ -209,7 +196,9 @@ const filterOptions = [
           const eventDate = new Date(event.date);
           return eventDate >= monthStart && eventDate <= monthEnd;
         });
-        toast.info(`Showing events for ${monthNames[today.getMonth()]} ${today.getFullYear()}`);
+        toast.info(`Showing events for ${monthNames[today.getMonth()]} ${today.getFullYear()}`, {
+          toastId: "filter-this-month",
+        });
         break;
         
       case "all":
@@ -237,7 +226,9 @@ const filterOptions = [
           return eventDate >= prevMonthStart && eventDate <= prevMonthEnd;
         });
         
-        toast.info(`Showing events for ${monthNames[prevMonth]} ${prevYear}`);
+        toast.info(`Showing events for ${monthNames[prevMonth]} ${prevYear}`, {
+          toastId: "filter-previous-month",
+        });
         break;
         
       case "upcoming":
@@ -271,7 +262,7 @@ const filterOptions = [
     setFilteredEvents(events);
     setCurrentMonth(today.getMonth());
     setCurrentYear(today.getFullYear());
-    toast.success("Filters cleared");
+    toast.success("Filters cleared", { toastId: "filters-cleared" });
   };
 
   const goToPreviousMonth = () => {
@@ -335,10 +326,14 @@ const filterOptions = [
         return newEvents;
       });
       setShowModal(false);
-      toast.success(isEditing ? "Event updated successfully!" : "Event added successfully!");
+      toast.success(isEditing ? "Event updated successfully!" : "Event added successfully!", {
+        toastId: isEditing ? `event-update-${newEvent.id}` : `event-add-${newEvent.id}`,
+      });
     } catch (error) {
       console.error("Error saving event:", error);
-      toast.error("Failed to save event. Please try again.");
+      toast.error("Failed to save event. Please try again.", {
+        toastId: `event-save-error-${Date.now()}`,
+      });
     }
   };
 
@@ -349,10 +344,14 @@ const filterOptions = [
         localStorage.setItem("calendarEvents", JSON.stringify(newEvents));
         return newEvents;
       });
-      toast.success("Event deleted successfully!");
+      toast.success("Event deleted successfully!", {
+        toastId: `event-deleted-${eventId}`,
+      });
     } catch (error) {
       console.error("Error deleting event:", error);
-      toast.error("Failed to delete event. Please try again.");
+      toast.error("Failed to delete event. Please try again.", {
+        toastId: `event-delete-error-${eventId}`,
+      });
     }
   };
 
@@ -365,10 +364,14 @@ const filterOptions = [
         localStorage.setItem("calendarEvents", JSON.stringify(newEvents));
         return newEvents;
       });
-      toast.success("Event marked as completed!");
+      toast.success("Event marked as completed!", {
+        toastId: `event-complete-${eventId}`,
+      });
     } catch (error) {
       console.error("Error completing event:", error);
-      toast.error("Failed to mark event as completed.");
+      toast.error("Failed to mark event as completed.", {
+        toastId: `event-complete-error-${eventId}`,
+      });
     }
   };
 
